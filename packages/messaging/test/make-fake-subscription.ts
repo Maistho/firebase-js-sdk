@@ -13,11 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * FakeSubscription Constructor.
- */
-const FakeSubscription = () => {};
-FakeSubscription.prototype = PushSubscription.prototype;
 
 /**
  * @private
@@ -40,6 +35,9 @@ const stringToArrayBuffer = string => {
  * @return Returns a fake subscription.
  */
 export function makeFakeSubscription(options: any = {}): PushSubscription {
+  const FakeSubscription = () => {};
+  FakeSubscription.prototype = PushSubscription.prototype;
+
   const fakeSub = new FakeSubscription();
 
   // Set endpoint

@@ -28,21 +28,10 @@ import { makeFakeSubscription } from './make-fake-subscription';
 import { makeFakeSWReg } from './make-fake-sw-reg';
 import { deleteDatabase } from './testing-utils/db-helper';
 
-const FAKE_SUBSCRIPTION = makeFakeSubscription();
-const EXAMPLE_TOKEN_SAVE = {
-  swScope: '/example-scope',
-  vapidKey: base64ToArrayBuffer(
-    'BNJxw7sCGkGLOUP2cawBaBXRuWZ3lw_PmQMgreLVVvX_b' +
-      '4emEWVURkCF8fUTHEFe2xrEgTt5ilh5xD94v0pFe_I'
-  ),
-  fcmSenderId: '1234567',
-  fcmToken: 'qwerty',
-  fcmPushSet: '7654321',
-  endpoint: FAKE_SUBSCRIPTION.endpoint,
-  auth: FAKE_SUBSCRIPTION.getKey('auth')!,
-  p256dh: FAKE_SUBSCRIPTION.getKey('p256dh')!,
-  createTime: Date.now()
-};
+import describe from './testing-utils/messaging-test-runner';
+
+const FAKE_SUBSCRIPTION;
+const EXAMPLE_TOKEN_SAVE;
 
 describe('Firebase Messaging > *Controller.deleteToken()', () => {
   let sandbox: sinon.SinonSandbox;
@@ -69,6 +58,24 @@ describe('Firebase Messaging > *Controller.deleteToken()', () => {
 
     return registration;
   }
+
+  before(() => {
+    FAKE_SUBSCRIPTION = makeFakeSubscription();
+    EXAMPLE_TOKEN_SAVE = {
+      swScope: '/example-scope',
+      vapidKey: base64ToArrayBuffer(
+        'BNJxw7sCGkGLOUP2cawBaBXRuWZ3lw_PmQMgreLVVvX_b' +
+          '4emEWVURkCF8fUTHEFe2xrEgTt5ilh5xD94v0pFe_I'
+      ),
+      fcmSenderId: '1234567',
+      fcmToken: 'qwerty',
+      fcmPushSet: '7654321',
+      endpoint: FAKE_SUBSCRIPTION.endpoint,
+      auth: FAKE_SUBSCRIPTION.getKey('auth')!,
+      p256dh: FAKE_SUBSCRIPTION.getKey('p256dh')!,
+      createTime: Date.now()
+    };
+  });
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();

@@ -31,13 +31,15 @@ import { makeFakeApp } from './make-fake-app';
 import { makeFakeSubscription } from './make-fake-subscription';
 import { makeFakeSWReg } from './make-fake-sw-reg';
 
+import describe from './testing-utils/messaging-test-runner';
+
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
 describe('Firebase Messaging > *Controller.getToken()', () => {
   const sandbox = sinon.sandbox.create();
   const now = Date.now();
   const expiredDate = now - ONE_DAY * 8; // 8 days ago
-  const FAKE_SUBSCRIPTION = makeFakeSubscription();
+  const FAKE_SUBSCRIPTION;
 
   const EXAMPLE_FCM_TOKEN = 'ExampleFCMToken1337';
   const EXAMPLE_SENDER_ID = '1234567890';
@@ -45,9 +47,9 @@ describe('Firebase Messaging > *Controller.getToken()', () => {
     'BDd3_hVL9fZi9Ybo2UUzA284WG5FZR30_95YeZJsiApwXK' +
       'pNcF1rRPF3foIiBHXRdJI2Qhumhf6_LFTeZaNndIo'
   );
-  const ENDPOINT = FAKE_SUBSCRIPTION.endpoint;
-  const AUTH = FAKE_SUBSCRIPTION.getKey('auth')!;
-  const P256DH = FAKE_SUBSCRIPTION.getKey('p256dh')!;
+  const ENDPOINT;
+  const AUTH;
+  const P256DH;
 
   const EXAMPLE_TOKEN_DETAILS_DEFAULT_VAPID: TokenDetails = {
     swScope: '/example-scope',
@@ -107,25 +109,34 @@ describe('Firebase Messaging > *Controller.getToken()', () => {
     });
   };
 
-  const generateFakeReg = getSubResult => {
-    const registration = makeFakeSWReg();
-    Object.defineProperty(registration, 'pushManager', {
-      value: {
-        getSubscription: () => {
-          if (typeof getSubResult === 'function') {
-            return getSubResult();
-          }
-
-          return getSubResult;
-        }
-      }
-    });
-    return Promise.resolve(registration);
-  };
+  const generateFakeReg;
 
   const cleanUp = () => {
     sandbox.restore();
   };
+
+  before(() => {
+    FAKE_SUBSCRIPTION = makeFakeSubscription();
+    ENDPOINT = FAKE_SUBSCRIPTION.endpoint;
+    AUTH = FAKE_SUBSCRIPTION.getKey('auth')!;
+    P256DH = FAKE_SUBSCRIPTION.getKey('p256dh')!;
+
+    generateFakeReg = getSubResult => {
+      const registration = makeFakeSWReg();
+      Object.defineProperty(registration, 'pushManager', {
+        value: {
+          getSubscription: () => {
+            if (typeof getSubResult === 'function') {
+              return getSubResult();
+            }
+
+            return getSubResult;
+          }
+        }
+      });
+      return Promise.resolve(registration);
+    };
+  });
 
   beforeEach(() => {
     return cleanUp();
@@ -136,9 +147,7 @@ describe('Firebase Messaging > *Controller.getToken()', () => {
   });
 
   it('should throw on unsupported browsers', () => {
-    sandbox
-      .stub(WindowController.prototype, 'isSupported_')
-      .callsFake(() => false);
+    sandbox.stub(WindowController, 'isSupported_').callsFake(() => false);
 
     const messagingService = new WindowController(app);
     return messagingService.getToken().then(

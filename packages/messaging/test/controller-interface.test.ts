@@ -29,6 +29,8 @@ import { IIDModel } from '../src/models/iid-model';
 import { TokenDetailsModel } from '../src/models/token-details-model';
 import { VapidDetailsModel } from '../src/models/vapid-details-model';
 
+import describe from './testing-utils/messaging-test-runner';
+
 const controllersToTest = [WindowController, SWController];
 
 /**

@@ -25,6 +25,8 @@ import { makeFakeSubscription } from './make-fake-subscription';
 import { deleteDatabase } from './testing-utils/db-helper';
 import { compareDetails } from './testing-utils/detail-comparator';
 
+import describe from './testing-utils/messaging-test-runner';
+
 const BAD_INPUTS: any[] = ['', [], {}, true, null, 123];
 
 describe('Firebase Messaging > TokenDetailsModel', () => {

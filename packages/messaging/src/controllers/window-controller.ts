@@ -69,7 +69,7 @@ export class WindowController extends ControllerInterface
    */
   getToken(): Promise<string | null> {
     // Check that the required API's are available
-    if (!this.isSupported_()) {
+    if (!WindowController.isSupported_()) {
       return Promise.reject(
         this.errorFactory_.create(ERROR_CODES.UNSUPPORTED_BROWSER)
       );
@@ -392,7 +392,7 @@ export class WindowController extends ControllerInterface
    */
   // Visible for testing
   // TODO: Make private
-  isSupported_(): boolean {
+  static isSupported_(): boolean {
     return (
       'serviceWorker' in navigator &&
       'PushManager' in window &&
